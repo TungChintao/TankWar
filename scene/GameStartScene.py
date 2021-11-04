@@ -1,6 +1,6 @@
 import sys
 import pygame
-from controller.GameCtrl import GameCtrl
+from manager.GameManager import GameManager
 from scene.AbstractScene import AbstractScene
 
 
@@ -56,7 +56,7 @@ class GameStartScene(AbstractScene):
             for event in pygame.event.get():
                 if event.type == pygame.KEYDOWN:
                     if event.key == pygame.K_RETURN:
-                        GameCtrl().double_mode = self.double_mode
+                        GameManager().double_mode = self.double_mode
                         return
                     elif event.key == pygame.K_w or event.key == pygame.K_UP or event.key == pygame.K_s or event.key == pygame.K_DOWN:
                         self.double_mode = not self.double_mode
@@ -78,7 +78,7 @@ class GameStartScene(AbstractScene):
             clock.tick(60)
 
     def _draw_interface(self):
-        screen = GameCtrl().screen
+        screen = GameManager().screen
         screen.blit(self.background, (0, 0))
         screen.blit(self.logo, self.logo_rect)
         if self.tip_flag:

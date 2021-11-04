@@ -1,8 +1,7 @@
-import os
 import pygame
 
 
-class GameCtrl(object):
+class GameManager(object):
 
     _init_flag = False
 
@@ -27,9 +26,9 @@ class GameCtrl(object):
 
     # 实现单例模式
     def __new__(cls, *args, **kwargs):
-        if not hasattr(GameCtrl, "_instance"):
-            GameCtrl._instance = object.__new__(cls)
-        return GameCtrl._instance
+        if not hasattr(GameManager, "_instance"):
+            GameManager._instance = object.__new__(cls)
+        return GameManager._instance
 
     def up_level(self):
         self.level += 1
@@ -50,7 +49,7 @@ class GameCtrl(object):
         pass
 
     def game_loop(self):
-        from scene.SceneManager import SceneManager
+        from manager.SceneManager import SceneManager
         SceneManager().show('GameStart')
         while True:
             print('ok')

@@ -1,6 +1,6 @@
 import sys
 import pygame
-from controller.GameCtrl import GameCtrl
+from manager.GameManager import GameManager
 
 
 class AbstractScene:
@@ -10,7 +10,7 @@ class AbstractScene:
 
     @property
     def config(self):
-        return GameCtrl().config
+        return GameManager().config
 
     def _load_resources(self):
         pass
@@ -37,7 +37,7 @@ class AbstractScene:
         pass
 
     def show(self):
-        GameCtrl().load_screen()
+        GameManager().load_screen()
         self._load_tips()
         self._load_bottons()
         self._game_loop()

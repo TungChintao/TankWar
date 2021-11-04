@@ -1,6 +1,6 @@
 import config
-from controller.GameCtrl import GameCtrl
+from manager.GameManager import GameManager
 
 if __name__ == '__main__':
-    gamectrl = GameCtrl(config)
+    gamectrl = GameManager(config)
     gamectrl.start()

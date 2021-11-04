@@ -1,13 +1,13 @@
 import pygame
 
 from scene.AbstractScene import AbstractScene
-from controller.GameCtrl import GameCtrl
+from manager.GameManager import GameManager
 
 
 class GameRunScene(AbstractScene):
     def __init_resources(self):
         config = self.config
-        self.sounds = GameCtrl().sounds
+        self.sounds = GameManager().sounds
         self.images = config.IMAGE
         self.home = pygame.image.load(self.images.get('background'))
         self.font = pygame.font.Font(config.FONT, config.HEIGHT//35)
