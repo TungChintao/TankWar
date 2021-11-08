@@ -1,4 +1,4 @@
-from scene.GameStartScene import GameStartScene
+from scene import *
 
 
 class SceneManager(object):
@@ -6,6 +6,8 @@ class SceneManager(object):
     def __init__(self):
         self.__scenes = {
             'GameStart': GameStartScene(),
+            'GameRun': GameRunScene(),
+            'GameOver': GameOverScene(),
         }
 
     def __new__(cls, *args, **kwargs):

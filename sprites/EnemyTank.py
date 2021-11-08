@@ -2,4 +2,5 @@ from sprites.tank import Tank
 
 
 class EnemyTank(Tank):
-    pass
+    def __init__(self, position, config):
+        super().__init__(config)

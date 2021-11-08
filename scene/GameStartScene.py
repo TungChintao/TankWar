@@ -14,9 +14,10 @@ class GameStartScene(AbstractScene):
             pygame.image.load(config.IMAGE.get('logo')),
             (450, 70))
         self.cursor = pygame.image.load(
-            config.TANK_IMAGE.get('player1')[0]
+            config.TANK_IMAGE.get('player1')
         ).convert_alpha().subsurface((0, 144), (48, 48))
-        self.font = pygame.font.Font(config.FONT, config.SCREEN_WIDTH // 20)
+        self.font = pygame.font.Font(config.FONT, config.FONT_SIZE)
+        # self.font = pygame.font.SysFont('lisu', config.FONT_SIZE)
 
     def _load_logo(self):
         config = self.config
