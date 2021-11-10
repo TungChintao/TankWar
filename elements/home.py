@@ -7,7 +7,7 @@ class Home(SceneElement):
         super().__init__(position, image[0])
         self.__destroyed = False
         self.destroyed_image = image[1]
-        self.protection_position = protection_position
+        # self.protection_position = protection_position
 
     @property
     def destroyed(self):

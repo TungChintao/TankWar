@@ -5,7 +5,7 @@ from uiutil import DIRECTION
 class PlayerTank(Tank):
     def __init__(self, name, position, config):
         super().__init__(config=config)
-        print(self.config.TANK_IMAGE.get(name))
+        # print(self.config.TANK_IMAGE.get(name))
         self.load_tank_image(self.config.TANK_IMAGE.get(name))
         self.init_direction = DIRECTION.UP
         self.init_position = position

@@ -1,11 +1,14 @@
 import sys
+import random
 import pygame
 from factory import *
+from elements import *
 from uiutil import DIRECTION
 from scene.AbstractScene import AbstractScene
 from manager.GameManager import GameManager
 from sprites.SpriteGroup import SpriteGroup
 from sprites.SceneElementGroup import SceneElementGroup
+from pygame.sprite import groupcollide, spritecollide
 
 
 class GameRunScene(AbstractScene):
@@ -14,7 +17,6 @@ class GameRunScene(AbstractScene):
         config = self.config
         self.tank_factory = TankFactory(self.config)
         self.scene_factory = SceneElementFactory(self.config)
-        self.scene_elements = None
         self.sprites = SpriteGroup()
 
         self.music = GameManager().music
@@ -36,31 +38,55 @@ class GameRunScene(AbstractScene):
         if GameManager().double_mode:
             self.__tank_player2 = self.tank_factory.create_tank(self.__player_point[1], TankFactory.PLAYER2_TANK)
             self.sprites.add(self.__tank_player2)
+        for position in self.__enemy_point:
+            self.sprites.add(self.tank_factory.create_tank(position, TankFactory.ENEMY_TANK))
 
     def load_game_screen(self):
         GameManager().load_screen(
             (self.config.SCREEN_WIDTH, self.config.SCREEN_HEIGHT)
         )
 
-    def __load_game(self):
-        home_position = ()
-        home_protection_position = []
+    def __load_collision(self):
+        self.collision = {
+            'elements': {
+                'PlayerBulletWithBrick': (self.sprites.player_bullets, self.scene_elements.brick_group, True, True),
+                'EnemyBulletWithBrick': (self.sprites.enemy_bullets, self.scene_elements.brick_group, True, True),
+                'BulletWithBullet': (self.sprites.player_bullets, self.sprites.enemy_bullets, True, True),
+            },
+            'sprite': {
 
+            },
+            'bullets': {
+                'PlayerTankWithEnemyBullet': (self.sprites.player_tanks, self.sprites.enemy_bullets, True, None),
+                'EnemyTankWithPlayerBullet': (self.sprites.enemy_tanks, self.sprites.player_bullets, True, None),
+            }
+
+        }
+
+    def __load_event(self):
+        self.__generate_enemies_event = pygame.constants.USEREVENT
+        pygame.time.set_timer(self.__generate_enemies_event, 20000)
+
+    def __load_game(self):
         elements_map = {
             'B': SceneElementFactory.BRICK,
             'I': SceneElementFactory.IRON,
             'T': SceneElementFactory.TREE,
-            'R': SceneElementFactory.RIVER_1
+            'R': SceneElementFactory.RIVER_1,
+            'C': SceneElementFactory.ICE,
         }
 
+        home_position = ()
+        home_protection_position = []
+
         f = open(GameManager().game_file)
-        num = -1
+        num_row = -1
         for line in f.readlines():
             line = line.strip('\n')
             if line.startswith('#') or (not line):
                 continue
-            elif line.startswith('%ENEMYTOTALNUM'):
-                self.__enemy_total_num = 20 + GameManager().level
+            elif line.startswith('%TOTALENEMYNUM'):
+                self.total_enemy_num = 20 + GameManager().level
             elif line.startswith('%MAXENEMYNUM'):
                 self.max_enemy_num = 6 + GameManager().level
             elif line.startswith('%HOMEPOS'):
@@ -72,6 +98,19 @@ class GameRunScene(AbstractScene):
                     self.border_len + home_position[0] * self.grid_size,
                     self.border_len + home_position[1] * self.grid_size
                 )
+            # home周围
+            elif line.startswith('%HOMEAROUNDPOS'):
+                home_protection_position = line.split(':')[-1]
+                home_protection_position = [
+                    [
+                        int(pos.split(',')[0]), int(pos.split(',')[1])
+                    ] for pos in home_protection_position.split(' ')
+                ]
+                home_protection_position = [
+                    (
+                        self.border_len + pos[0] * self.grid_size, self.border_len + pos[1] * self.grid_size
+                    ) for pos in home_protection_position
+                ]
             # 我方坦克初始位置
             elif line.startswith('%PLAYERTANKPOS'):
                 self.__player_point = line.split(':')[-1]
@@ -97,6 +136,22 @@ class GameRunScene(AbstractScene):
                         self.border_len + pos[0] * self.grid_size, self.border_len + pos[1] * self.grid_size
                     ) for pos in self.__enemy_point
                 ]
+                # 地图元素
+            else:
+                num_row += 1
+                for num_col, elem in enumerate(line.split(' ')):
+                    position = self.border_len + num_col * self.grid_size, self.border_len + num_row * self.grid_size
+
+                    scene_element = None
+                    if elem in elements_map:
+                        scene_element = self.scene_factory.create_element(position, elements_map[elem])
+                    elif elem == 'R':
+                        scene_element = self.scene_factory.create_element(
+                            position, random.choice([SceneElementFactory.RIVER_1, SceneElementFactory.RIVER_2])
+                        )
+                    if scene_element is not None:
+                        self.scene_elements.add(scene_element)
+        self.__home = Home(position=home_position, image=self.home_image, protection_position=home_protection_position)
 
     def play_music(self, music):
         print(self.music[music])
@@ -119,14 +174,15 @@ class GameRunScene(AbstractScene):
         player_tank_list = []
         if self.__tank_player1.life >= 0:
             player_tank_list.append(self.__tank_player1)
-        if GameManager().double_mode and self.__tank_player2.life >= 0:
-            player_tank_list.append(self.__tank_player2)
+        # if GameManager().double_mode and self.__tank_player2.life >= 0:
+        #     player_tank_list.append(self.__tank_player2)
 
         for tank in player_tank_list:
             for key, direction in key_map['direction'][tank].items():
                 if key_press[key]:
                     self.sprites.remove(tank)
-                    tank.move(direction)
+                    tank.move(direction, self.scene_elements)
+                    tank.roll()
                     self.sprites.add(tank)
                     break
             if key_press[key_map['shoot'][tank]]:
@@ -134,6 +190,37 @@ class GameRunScene(AbstractScene):
                 if bullet:
                     # self.play_music('shoot')
                     self.sprites.add(bullet)
+
+    def dispatch_collision(self):
+        collision_map = {
+            'elements': {},
+            'sprite': {},
+            'bullets': {},
+        }
+        for (collision, args) in self.collision['elements'].items():
+            collision_map['elements'][collision] = groupcollide(*args)
+
+        for (collision, args) in self.collision['bullets'].items():
+            args_list = list(args)
+            sprite_list = args_list[0]
+            for sprite in sprite_list:
+                args_list[0] = sprite
+                args = tuple(args_list)
+                collision_map['bullets'][sprite] = spritecollide(*args)
+
+        for bullet in self.sprites.player_bullets:
+            collision = spritecollide(bullet, self.scene_elements.iron_group, False, None)
+            if collision:
+                bullet.kill()
+
+        for tank in self.sprites.enemy_tanks:
+            if collision_map['bullets'][tank]:
+                if tank.decrease_level():
+                    self.total_enemy_num -= 1
+        for tank in self.sprites.player_tanks:
+            if collision_map['bullets'][tank]:
+                if tank.life < 0:
+                    self.sprites.remove(tank)
 
     def game_loop(self):
         clock = pygame.time.Clock()
@@ -143,8 +230,20 @@ class GameRunScene(AbstractScene):
                 if event.type == pygame.QUIT:
                     pygame.quit()
                     sys.exit()
+                elif event.type == self.__generate_enemies_event:
+                    if self.max_enemy_num > len(self.sprites.enemy_tanks):
+                        for position in self.__enemy_point:
+                            if len(self.sprites.enemy_tanks) == self.total_enemy_num:
+                                break
+                            enemy_tank = self.tank_factory.create_tank(position, TankFactory.ENEMY_TANK)
+                            if spritecollide(enemy_tank, self.sprites.enemy_tanks, False, None) or \
+                                    spritecollide(enemy_tank, self.sprites.player_tanks, False, None):
+                                del enemy_tank
+                            else:
+                                self.sprites.add(enemy_tank)
             self.dispatch_player_operation()
-            self.sprites.update()
+            self.dispatch_collision()
+            self.sprites.update(self.scene_elements)
             self._draw_interface()
 
             clock.tick(60)
@@ -152,12 +251,17 @@ class GameRunScene(AbstractScene):
     def _draw_interface(self):
         screen = GameManager().screen
         screen.blit(self.background, (0, 0))
+        self.scene_elements.draw(screen, 1)
         self.sprites.draw(screen, 1)
+        self.scene_elements.draw(screen, 2)
+        self.__home.draw(screen)
         pygame.display.flip()
 
     def show(self):
         self.load_game_screen()
         self.__load_game()
+        self.__load_event()
         self.__load_tanks()
+        self.__load_collision()
         self.game_loop()
         GameManager().win_flag = self.win_flag

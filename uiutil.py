@@ -10,7 +10,7 @@ class DIRECTION(Enum):
 
     @classmethod
     def random(cls):
-        return random.choice([DIRECTION.DOWN, DIRECTION.LEFT, DIRECTION.RIGHT])
+        return random.choice([DIRECTION.DOWN, DIRECTION.LEFT, DIRECTION.RIGHT, DIRECTION.UP])
 
     @classmethod
     def list(cls):

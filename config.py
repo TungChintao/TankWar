@@ -57,7 +57,7 @@ BULLET_IMAGE = {
 
 SCENE_IMAGE = {
     'brick': os.path.join(os.getcwd(), 'resources/scene/brick.png'),
-    'ice': os.path.join(os.getcwd(), 'resources//scene/ice.png'),
+    'ice': os.path.join(os.getcwd(), 'resources/scene/ice.png'),
     'iron': os.path.join(os.getcwd(), 'resources/scene/iron.png'),
     'river1': os.path.join(os.getcwd(), 'resources/scene/river1.png'),
     'river2': os.path.join(os.getcwd(), 'resources/scene/river2.png'),

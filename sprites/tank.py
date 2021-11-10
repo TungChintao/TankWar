@@ -2,6 +2,7 @@ import pygame
 from sprites.bullet import Bullet
 
 from uiutil import DIRECTION, COLLISION
+from pygame.sprite import spritecollide
 
 
 class Tank(pygame.sprite.Sprite):
@@ -11,10 +12,14 @@ class Tank(pygame.sprite.Sprite):
         self.tank_image = None
 
         self.speed = 8
+        self.switch_time = 1
+        self.switch_count = 0
         self.switch_flag = False
 
+        self.cache_time = 4
+        self.cache_count = 0
+
         self.bullet_cooling = False
-        self.bullet_cooling_time = 20
         self.boom_flag = False
 
         self.border_len = config.BORDER_LEN
@@ -45,18 +50,51 @@ class Tank(pygame.sprite.Sprite):
         elif self.direction == DIRECTION.RIGHT:
             self.tank_direction_image = self.tank_image.subsurface((0, 144), (96, 48))
 
-    def move(self, direction):
+    def roll(self):
+        self.switch_count += 1
+        if self.switch_count > self.switch_time:
+            self.switch_count = 0
+            self.switch_flag = not self.switch_flag
+
+    def move(self, direction, scene_elements):
         if self.boom_flag:
             return
         if self.direction != direction:
             self._update_direction(direction)
+            self.switch_count = self.switch_time
+            self.cache_count = self.cache_time
+
+        self.cache_count += 1
+        if self.cache_count < self.cache_time:
+            return
+        self.cache_count = 0
 
         new_position = (self.direction.value[0] * self.speed, self.direction.value[1]*self.speed)
         old_rect = self.rect
         self.rect = self.rect.move(new_position)
+        collision = 0
+        cannot_pass = [scene_elements.brick_group, scene_elements.iron_group, scene_elements.river_group]
+        for element in cannot_pass:
+            if spritecollide(self, element, False, None):
+                self.rect = old_rect
+                collision |= COLLISION.WITH_SCENE_ELEMENTS
+
+        if self.rect.left < self.border_len:
+            self.rect.left = self.border_len
+            collision |= COLLISION.WITH_BORDER
+        elif self.rect.right > self.screen_size[0] - self.border_len:
+            collision |= COLLISION.WITH_BORDER
+            self.rect.right = self.screen_size[0] - self.border_len
+        elif self.rect.top < self.border_len:
+            collision |= COLLISION.WITH_BORDER
+            self.rect.top = self.border_len
+        elif self.rect.bottom > self.screen_size[1] - self.border_len:
+            collision |= COLLISION.WITH_BORDER
+            self.rect.bottom = self.screen_size[1] - self.border_len
+
+        return collision
 
     def shoot(self):
-        print(self.boom_flag, self.bullet_cooling)
         if self.boom_flag:
             return False
         if not self.bullet_cooling:
