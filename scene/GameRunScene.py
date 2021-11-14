@@ -237,7 +237,6 @@ class GameRunScene(AbstractScene):
             self.has_next_loop = False
             self.__home.destroyed = True
 
-
     def game_loop(self):
         clock = pygame.time.Clock()
 

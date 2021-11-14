@@ -10,6 +10,7 @@ class PlayerTank(Tank):
         self.load_tank_image(self.config.TANK_IMAGE.get(name))
         self.init_direction = DIRECTION.UP
         self.init_position = position
+
         self.life = 3
         self.__reborn()
 
@@ -17,6 +18,12 @@ class PlayerTank(Tank):
         super()._load_resources()
 
     def update(self):
+        if self.bullet_cooling:
+            self.bullet_cooling_count += 1
+            if self.bullet_cooling_count >= self.bullet_time:
+                self.bullet_cooling_count = 0
+                self.bullet_cooling = False
+
         if self.boom_flag:
             self.boom_count += 1
             if self.boom_count > self.boom_time:
@@ -36,13 +43,10 @@ class PlayerTank(Tank):
 
     def __reborn(self):
         print(self.life)
+        self.bullet_cooling = False
+        self.bullet_time = 30
+        self.bullet_cooling_count = 0
         self._update_direction(self.init_direction)
         self.rect = self.image.get_rect()
         self.rect.left, self.rect.top = self.init_position
 
-
-
-
-    #
-    # def __reborn(self):
-    #     self._tank_image =

@@ -56,7 +56,6 @@ class GameManager(object):
 
     @property
     def game_file(self):
-
         weights = [1]*len(self.levels)
         if self.final is not None:
             weights[self.final]  = 0
@@ -69,6 +68,8 @@ class GameManager(object):
 
     def reset_level(self):
         self.level = 0
+        self.__kill_enemies = 0
+        self.__begin_clock = time.time()
 
     def load_screen(self, size=None):
         if size is None:
@@ -89,8 +90,9 @@ class GameManager(object):
     def game_loop(self):
         from manager.SceneManager import SceneManager
         SceneManager().show('GameStart')
+        self.__begin_clock = time.time()
         while True:
-            self.__begin_clock = time.time()
+            SceneManager().show('GameLoad')
             SceneManager().show('GameRun')
             if not self.win_game:
                 self.__time_consuming = time.time() - self.__begin_clock
@@ -98,8 +100,6 @@ class GameManager(object):
                 self.reset_level()
             else:
                 self.up_level()
-            #self.time_consuming = time.time() - self.begin_clock
-            # SceneManager().show('GameOver')
             if self.exit_game:
                 break
 

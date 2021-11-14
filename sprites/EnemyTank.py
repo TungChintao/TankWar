@@ -15,6 +15,9 @@ class EnemyTank(Tank):
         self.level = int(self.tank_type)
         self.speed = 10 - self.level*3
 
+        self.bullet_cooling_time = 120 - self.level*10
+        self.bullet_cooling_count = 0
+
         self.born_flag = True
         self.born_time = 90
         self.stop_flag = False
@@ -65,6 +68,11 @@ class EnemyTank(Tank):
         else:
             self.move(self.direction, scene_elements, player_group, enemy_group, home)
             self.roll()
+            if self.bullet_cooling:
+                self.bullet_cooling_count += 1
+                if self.bullet_cooling_count >= self.bullet_cooling_time:
+                    self.bullet_cooling_count = 0
+                    self.bullet_cooling = False
             bullet = self.shoot()
         # print('enemy')
         return remove_flag, bullet

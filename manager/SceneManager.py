@@ -6,6 +6,7 @@ class SceneManager(object):
     def __init__(self):
         self.__scenes = {
             'GameStart': GameStartScene(),
+            'GameLoad': GameLoadScene(),
             'GameRun': GameRunScene(),
             'GameOver': GameOverScene(),
         }

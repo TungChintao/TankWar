@@ -23,4 +23,5 @@ class Bullet(pygame.sprite.Sprite):
 
     def kill(self):
         super().kill()
-        self.tank.bullet_cooling = False
+        self.tank.bullet_count -= 1
+        # self.tank.bullet_cooling = False

@@ -22,6 +22,8 @@ class Tank(pygame.sprite.Sprite):
         self.cache_count = 0
 
         self.bullet_cooling = False
+        self.bullet_count = 0
+        self.__bullet_limit = 1
 
         self.boom_flag = False
         self.boom_time = 5
@@ -31,6 +33,9 @@ class Tank(pygame.sprite.Sprite):
         self.screen_size = [config.SCREEN_WIDTH, config.SCREEN_HEIGHT]
         self._load_resources()
 
+    @property
+    def bullet_limit(self):
+        return self.__bullet_limit
 
     @property
     def image(self):
@@ -112,6 +117,10 @@ class Tank(pygame.sprite.Sprite):
         if self.boom_flag:
             return False
         if not self.bullet_cooling:
+            if self.bullet_count >= self.bullet_limit:
+                return False
+            else:
+                self.bullet_count += 1
             self.bullet_cooling = True
             position = (self.rect.centerx + self.direction.value[0], self.rect.centery + self.direction.value[1])
             bullet = Bullet(direction=self.direction, position=position,tank=self,config=self.config)
