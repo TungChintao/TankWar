@@ -39,12 +39,16 @@ class EnemyTank(Tank):
             return self.appear_images[(90 - self.born_time//10) % 3]
         return super().image
 
-    def update(self, scene_elements):
+    def update(self, scene_elements, player_group, enemy_group, home):
         remove_flag = False
         bullet = None
 
         if self.boom_flag:
-            remove_flag = True
+            self.boom_count += 1
+            if self.boom_count > self.boom_time:
+                self.boom_count = 0
+                self.boom_flag = False
+                remove_flag = True
             return remove_flag, bullet
 
         if self.stop_flag:
@@ -59,7 +63,7 @@ class EnemyTank(Tank):
             if self.born_time < 0:
                 self.born_flag = False
         else:
-            self.move(self.direction, scene_elements)
+            self.move(self.direction, scene_elements, player_group, enemy_group, home)
             self.roll()
             bullet = self.shoot()
         # print('enemy')
@@ -82,8 +86,8 @@ class EnemyTank(Tank):
 
         self._update_direction(random.choice(direction_list))
 
-    def move(self, direction, scene_elements):
-        collisions = super().move(direction, scene_elements)
+    def move(self, direction, scene_elements, player_group, enemy_group, home):
+        collisions = super().move(direction, scene_elements, player_group, enemy_group, home)
         if collisions is None or collisions == 0:
             return
         change_direction = False

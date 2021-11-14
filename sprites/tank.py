@@ -12,6 +12,8 @@ class Tank(pygame.sprite.Sprite):
         self.tank_image = None
 
         self.speed = 8
+        self.life = 0
+
         self.switch_time = 1
         self.switch_count = 0
         self.switch_flag = False
@@ -20,11 +22,15 @@ class Tank(pygame.sprite.Sprite):
         self.cache_count = 0
 
         self.bullet_cooling = False
+
         self.boom_flag = False
+        self.boom_time = 5
+        self.boom_count = 0
 
         self.border_len = config.BORDER_LEN
         self.screen_size = [config.SCREEN_WIDTH, config.SCREEN_HEIGHT]
         self._load_resources()
+
 
     @property
     def image(self):
@@ -56,7 +62,7 @@ class Tank(pygame.sprite.Sprite):
             self.switch_count = 0
             self.switch_flag = not self.switch_flag
 
-    def move(self, direction, scene_elements):
+    def move(self, direction, scene_elements, player_group, enemy_group, home):
         if self.boom_flag:
             return
         if self.direction != direction:
@@ -78,6 +84,14 @@ class Tank(pygame.sprite.Sprite):
             if spritecollide(self, element, False, None):
                 self.rect = old_rect
                 collision |= COLLISION.WITH_SCENE_ELEMENTS
+
+        if spritecollide(self, player_group, False, None) or spritecollide(self, enemy_group, False, None):
+            collision |= COLLISION.WITH_TANK
+            self.rect = old_rect
+
+        if pygame.sprite.collide_rect(self, home):
+            collision |= COLLISION.WITH_HOME
+            self.rect = old_rect
 
         if self.rect.left < self.border_len:
             self.rect.left = self.border_len
@@ -103,6 +117,7 @@ class Tank(pygame.sprite.Sprite):
             bullet = Bullet(direction=self.direction, position=position,tank=self,config=self.config)
             return bullet
         return False
+
 
 
 

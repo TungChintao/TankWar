@@ -53,7 +53,9 @@ class GameRunScene(AbstractScene):
                 'EnemyBulletWithBrick': (self.sprites.enemy_bullets, self.scene_elements.brick_group, True, True),
                 'BulletWithBullet': (self.sprites.player_bullets, self.sprites.enemy_bullets, True, True),
             },
-            'sprite': {
+            'home': {
+                'PlayerBulletWithHome': (self.__home, self.sprites.player_bullets, True, None),
+                'EnemyBulletWithHome': (self.__home, self.sprites.enemy_bullets, True, None),
 
             },
             'bullets': {
@@ -181,7 +183,7 @@ class GameRunScene(AbstractScene):
             for key, direction in key_map['direction'][tank].items():
                 if key_press[key]:
                     self.sprites.remove(tank)
-                    tank.move(direction, self.scene_elements)
+                    tank.move(direction, self.scene_elements, self.sprites.player_tanks, self.sprites.enemy_tanks, self.__home)
                     tank.roll()
                     self.sprites.add(tank)
                     break
@@ -194,11 +196,14 @@ class GameRunScene(AbstractScene):
     def dispatch_collision(self):
         collision_map = {
             'elements': {},
-            'sprite': {},
+            'home': {},
             'bullets': {},
         }
         for (collision, args) in self.collision['elements'].items():
             collision_map['elements'][collision] = groupcollide(*args)
+
+        for (collision, args) in self.collision['home'].items():
+            collision_map['home'][collision] = spritecollide(*args)
 
         for (collision, args) in self.collision['bullets'].items():
             args_list = list(args)
@@ -217,10 +222,19 @@ class GameRunScene(AbstractScene):
             if collision_map['bullets'][tank]:
                 if tank.decrease_level():
                     self.total_enemy_num -= 1
+
         for tank in self.sprites.player_tanks:
             if collision_map['bullets'][tank]:
+                if tank.decrease_life():
+                    pass
                 if tank.life < 0:
                     self.sprites.remove(tank)
+
+        if collision_map['home']['PlayerBulletWithHome'] or collision_map['home']['EnemyBulletWithHome']:
+            self.win_flag = False
+            self.next_level = False
+            self.__home.destroyed = True
+
 
     def game_loop(self):
         clock = pygame.time.Clock()
@@ -243,8 +257,15 @@ class GameRunScene(AbstractScene):
                                 self.sprites.add(enemy_tank)
             self.dispatch_player_operation()
             self.dispatch_collision()
-            self.sprites.update(self.scene_elements)
+            self.sprites.update(self.scene_elements, self.__home)
             self._draw_interface()
+
+            if len(self.sprites.player_tanks) == 0:
+                self.win_flag = False
+                self.next_level = False
+            if self.total_enemy_num <= 0:
+                self.win_flag = True
+                self.next_level = False
 
             clock.tick(60)
 

@@ -33,7 +33,7 @@ class SpriteGroup(object):
             elif isinstance(sprite.tank, EnemyTank):
                 self.enemy_bullets.remove(sprite)
 
-    def update(self, scene_elements):
+    def update(self, scene_elements, home):
         for bullet in self.player_bullets:
             if bullet.move():
                 bullet.kill()
@@ -48,7 +48,7 @@ class SpriteGroup(object):
 
         for tank in self.enemy_tanks:
             self.remove(tank)
-            remove_flag, bullet = tank.update(scene_elements)
+            remove_flag, bullet = tank.update(scene_elements, self.player_tanks, self.enemy_tanks, home)
             # print('sprite group')
             # print(remove_flag, bullet)
             self.add(tank)
