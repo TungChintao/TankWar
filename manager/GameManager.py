@@ -17,7 +17,6 @@ class GameManager(object):
 
             # 初始配置---------------------------
             self.config = config
-            self.level = 0
             self.music = {}
             self.final = None
             self.levels = None
@@ -29,6 +28,8 @@ class GameManager(object):
             self.exit_game = False
 
             # 游戏数据-----------------------------
+            self.__level = 0
+            self.__difficulty = 0
             self.__begin_clock = 0
             self.__kill_enemies = 0
             self.__time_consuming = 0
@@ -41,6 +42,18 @@ class GameManager(object):
         if not hasattr(GameManager, "_instance"):
             GameManager._instance = object.__new__(cls)
         return GameManager._instance
+
+    @property
+    def level(self):
+        return self.__level
+
+    @property
+    def difficulty(self):
+        return self.__difficulty
+
+    @difficulty.setter
+    def difficulty(self, dif):
+        self.__difficulty = dif
 
     @property
     def kill_enemies(self):
@@ -64,10 +77,10 @@ class GameManager(object):
         return self.levels[self.final]
 
     def up_level(self):
-        self.level += 1
+        self.__level += 1
 
     def reset_level(self):
-        self.level = 0
+        self.__level = 0
         self.__kill_enemies = 0
         self.__begin_clock = time.time()
 
@@ -90,8 +103,11 @@ class GameManager(object):
     def game_loop(self):
         from manager.SceneManager import SceneManager
         SceneManager().show('GameStart')
+        SceneManager().show('SetDifficulty')
         self.__begin_clock = time.time()
         while True:
+            # print(self.__difficulty)
+            # break
             SceneManager().show('GameLoad')
             SceneManager().show('GameRun')
             if not self.win_game:

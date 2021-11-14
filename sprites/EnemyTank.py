@@ -13,9 +13,9 @@ class EnemyTank(Tank):
         self.level_image = level_images.get(self.tank_type)
 
         self.level = int(self.tank_type)
-        self.speed = 10 - self.level*3
+        self.speed = 10 - self.level*3 + GameManager().difficulty
 
-        self.bullet_cooling_time = 120 - self.level*10
+        self.bullet_cooling_time = 100 - self.level*10 - GameManager().difficulty*10
         self.bullet_cooling_count = 0
 
         self.born_flag = True

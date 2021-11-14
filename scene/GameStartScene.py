@@ -26,13 +26,13 @@ class GameStartScene(AbstractScene):
 
     def _load_tips(self):
         config = self.config
-        self.player_normal = self.font.render('1 PLAYER', True, config.NORMAL)
-        self.player_hover = self.font.render('1 PLAYER', True, config.HOVER)
+        self.player_normal = self.font.render('单人模式', True, config.NORMAL)
+        self.player_hover = self.font.render('单人模式', True, config.HOVER)
         self.player_rect = self.player_normal.get_rect()
         self.player_rect.left, self.player_rect.top = config.SCREEN_WIDTH / 2.8, config.SCREEN_HEIGHT / 2.5
 
-        self.players_normal = self.font.render('2 PLAYERS', True, config.NORMAL)
-        self.players_hover = self.font.render('2 PLAYERS', True, config.HOVER)
+        self.players_normal = self.font.render('双人模式', True, config.NORMAL)
+        self.players_hover = self.font.render('双人模式', True, config.HOVER)
         self.players_rect = self.players_normal.get_rect()
         self.players_rect.left, self.players_rect.top = config.SCREEN_WIDTH / 2.8, config.SCREEN_HEIGHT / 2
 

@@ -5,6 +5,7 @@ class SceneManager(object):
 
     def __init__(self):
         self.__scenes = {
+            'SetDifficulty': SetDifficultyScene(),
             'GameStart': GameStartScene(),
             'GameLoad': GameLoadScene(),
             'GameRun': GameRunScene(),

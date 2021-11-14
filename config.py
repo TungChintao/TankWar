@@ -10,8 +10,8 @@ HOVER = (128, 0, 128)
 
 TITLE = 'TankWar --061900224童锦涛'
 
-FONT = os.path.join(os.getcwd(), 'resources/font/consola.ttf')
-FONT_SIZE = SCREEN_WIDTH // 18
+FONT = os.path.join(os.getcwd(), 'resources/font/STXINWEI.TTF')
+FONT_SIZE = SCREEN_WIDTH // 16
 
 # 关卡
 LEVEL = os.path.join(os.getcwd(), 'levels')

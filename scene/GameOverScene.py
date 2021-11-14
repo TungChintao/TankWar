@@ -9,7 +9,7 @@ class GameOverScene(AbstractScene):
     def _load_resources(self):
         config = self.config
         self.background = pygame.image.load(config.IMAGE.get('background'))
-        self.font = pygame.font.Font(config.FONT, config.SCREEN_WIDTH//12)
+        self.font = pygame.font.Font(config.FONT, config.SCREEN_WIDTH//15)
         self.font2 = pygame.font.Font(config.FONT, config.SCREEN_WIDTH//18)
         self.tank_cursor = pygame.image.load(
             config.TANK_IMAGE.get('player1')
@@ -18,21 +18,24 @@ class GameOverScene(AbstractScene):
     def _load_tips(self):
         config = self.config
 
-        self.font_render = self.font.render("Player Record", True, (255, 255, 0))
+        self.font_render = self.font.render("玩家记录", True, (255, 255, 0))
 
         self.font_rect = self.font_render.get_rect()
-        self.kill_render = self.font2.render('Kill Enemies: ' + str(GameManager().kill_enemies), True, (0, 255, 0))
+        self.level_render = self.font2.render('通关数: ' + str(GameManager().level), True, (0, 255, 0))
+        self.level_rect = self.level_render.get_rect()
+        self.level_rect.left, self.level_rect.top = config.SCREEN_WIDTH / 3, config.SCREEN_HEIGHT / 3.7
+        self.kill_render = self.font2.render('击败敌人: ' + str(GameManager().kill_enemies), True, (0, 255, 0))
         self.kill_rect = self.kill_render.get_rect()
-        self.kill_rect.centerx, self.kill_rect.top = config.SCREEN_WIDTH / 2, config.SCREEN_HEIGHT / 4
+        self.kill_rect.left, self.kill_rect.top = config.SCREEN_WIDTH / 3, config.SCREEN_HEIGHT / 3
 
-        self.time_render = self.font2.render('Time Consume: %.2fs' % GameManager().time_consuming, True, (0, 255, 0))
+        self.time_render = self.font2.render('花费时间: %.2fs' % GameManager().time_consuming, True, (0, 255, 0))
         self.time_rect = self.time_render.get_rect()
-        self.time_rect.centerx, self.time_rect.top = config.SCREEN_WIDTH / 2, config.SCREEN_HEIGHT / 3
+        self.time_rect.left, self.time_rect.top = config.SCREEN_WIDTH / 3, config.SCREEN_HEIGHT / 2.5
         self.font_rect.centerx, self.font_rect.centery = config.SCREEN_WIDTH / 2, config.SCREEN_HEIGHT / 9
-        self.restart_render_normal = self.font.render('RESTART', True, config.NORMAL)
-        self.restart_render_hover = self.font.render('RESTART', True, config.HOVER)
-        self.quit_render_normal = self.font.render('QUIT', True, config.NORMAL)
-        self.quit_render_hover = self.font.render('QUIT', True, config.HOVER)
+        self.restart_render_normal = self.font.render('重新开始', True, config.NORMAL)
+        self.restart_render_hover = self.font.render('重新开始', True, config.HOVER)
+        self.quit_render_normal = self.font.render('退出游戏', True, config.NORMAL)
+        self.quit_render_hover = self.font.render('退出游戏', True, config.HOVER)
 
     def _draw_interface(self):
         screen = GameManager().screen
@@ -41,6 +44,7 @@ class GameOverScene(AbstractScene):
         if self.record_show_flag:
             screen.blit(self.font_render, self.font_rect)
 
+        screen.blit(self.level_render, self.level_rect)
         screen.blit(self.kill_render, self.kill_rect)
         screen.blit(self.time_render, self.time_rect)
 
@@ -59,7 +63,7 @@ class GameOverScene(AbstractScene):
         self.restart_rect = self.restart_render_normal.get_rect()
         self.restart_rect.centerx, self.restart_rect.top = config.SCREEN_WIDTH / 2, config.SCREEN_HEIGHT / 1.8
         self.quit_rect = self.quit_render_normal.get_rect()
-        self.quit_rect.centerx, self.quit_rect.top = config.SCREEN_WIDTH / 2, config.SCREEN_HEIGHT / 1.4
+        self.quit_rect.centerx, self.quit_rect.top = config.SCREEN_WIDTH / 2, config.SCREEN_HEIGHT / 1.5
 
     def _game_loop(self):
         clock = pygame.time.Clock()
