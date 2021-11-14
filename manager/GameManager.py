@@ -1,4 +1,5 @@
 import os
+import time
 import random
 import pygame
 
@@ -27,6 +28,11 @@ class GameManager(object):
             self.win_game = False
             self.exit_game = False
 
+            # 游戏数据-----------------------------
+            self.__begin_clock = 0
+            self.__kill_enemies = 0
+            self.__time_consuming = 0
+
             # 开始游戏------------------------------
             # self.start()
 
@@ -35,6 +41,18 @@ class GameManager(object):
         if not hasattr(GameManager, "_instance"):
             GameManager._instance = object.__new__(cls)
         return GameManager._instance
+
+    @property
+    def kill_enemies(self):
+        return self.__kill_enemies
+
+    @kill_enemies.setter
+    def kill_enemies(self, num):
+        self.__kill_enemies = num
+
+    @property
+    def time_consuming(self):
+        return self.__time_consuming
 
     @property
     def game_file(self):
@@ -72,13 +90,16 @@ class GameManager(object):
         from manager.SceneManager import SceneManager
         SceneManager().show('GameStart')
         while True:
-            # self.viewManager.show('UPLevelView')
+            self.__begin_clock = time.time()
             SceneManager().show('GameRun')
-            if self.win_game:
+            if not self.win_game:
+                self.__time_consuming = time.time() - self.__begin_clock
                 SceneManager().show('GameOver')
                 self.reset_level()
             else:
                 self.up_level()
+            #self.time_consuming = time.time() - self.begin_clock
+            # SceneManager().show('GameOver')
             if self.exit_game:
                 break
 

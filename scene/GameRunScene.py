@@ -29,7 +29,8 @@ class GameRunScene(AbstractScene):
 
         self.scene_elements = SceneElementGroup()
         self.win_flag = False
-        self.next_level = True
+        self.over_flag = False
+        self.has_next_loop = True
 
     def __load_tanks(self):
         self.__tank_player1 = self.tank_factory.create_tank(self.__player_point[0], TankFactory.PLAYER1_TANK)
@@ -51,6 +52,7 @@ class GameRunScene(AbstractScene):
             'elements': {
                 'PlayerBulletWithBrick': (self.sprites.player_bullets, self.scene_elements.brick_group, True, True),
                 'EnemyBulletWithBrick': (self.sprites.enemy_bullets, self.scene_elements.brick_group, True, True),
+                'EnemyBulletWithIron': (self.sprites.enemy_bullets, self.scene_elements.iron_group, True, False),
                 'BulletWithBullet': (self.sprites.player_bullets, self.sprites.enemy_bullets, True, True),
             },
             'home': {
@@ -221,25 +223,25 @@ class GameRunScene(AbstractScene):
         for tank in self.sprites.enemy_tanks:
             if collision_map['bullets'][tank]:
                 if tank.decrease_level():
+                    GameManager().kill_enemies += 1
                     self.total_enemy_num -= 1
 
         for tank in self.sprites.player_tanks:
             if collision_map['bullets'][tank]:
                 if tank.decrease_life():
-                    pass
-                if tank.life < 0:
-                    self.sprites.remove(tank)
+                    if tank.life <= 0:
+                        self.sprites.remove(tank)
 
         if collision_map['home']['PlayerBulletWithHome'] or collision_map['home']['EnemyBulletWithHome']:
             self.win_flag = False
-            self.next_level = False
+            self.has_next_loop = False
             self.__home.destroyed = True
 
 
     def game_loop(self):
         clock = pygame.time.Clock()
 
-        while True:
+        while self.has_next_loop:
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
                     pygame.quit()
@@ -262,10 +264,11 @@ class GameRunScene(AbstractScene):
 
             if len(self.sprites.player_tanks) == 0:
                 self.win_flag = False
-                self.next_level = False
+                self.has_next_loop = False
+
             if self.total_enemy_num <= 0:
                 self.win_flag = True
-                self.next_level = False
+                self.has_next_loop = False
 
             clock.tick(60)
 
@@ -285,4 +288,4 @@ class GameRunScene(AbstractScene):
         self.__load_tanks()
         self.__load_collision()
         self.game_loop()
-        GameManager().win_flag = self.win_flag
+        GameManager().win_game = self.win_flag
