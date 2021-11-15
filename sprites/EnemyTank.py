@@ -9,11 +9,11 @@ class EnemyTank(Tank):
     def __init__(self, position, config):
         super().__init__(config)
         level_images = self.config.TANK_IMAGE
-        self.tank_type = random.choices(['0', '1', '2'], weights=[10, 10, GameManager().level+10])[0]
+        self.tank_type = random.choices(['0', '1', '2'], weights=[10, 10, GameManager().difficulty+GameManager().level+10])[0]
         self.level_image = level_images.get(self.tank_type)
 
         self.level = int(self.tank_type)
-        self.speed = 10 - self.level*3 + GameManager().difficulty
+        self.speed = 8 - self.level*3 + 2*GameManager().difficulty
 
         self.bullet_cooling_time = 100 - self.level*10 - GameManager().difficulty*10
         self.bullet_cooling_count = 0
@@ -96,6 +96,7 @@ class EnemyTank(Tank):
 
     def move(self, direction, scene_elements, player_group, enemy_group, home):
         collisions = super().move(direction, scene_elements, player_group, enemy_group, home)
+
         if collisions is None or collisions == 0:
             return
         change_direction = False

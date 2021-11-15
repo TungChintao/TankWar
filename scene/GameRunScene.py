@@ -42,6 +42,12 @@ class GameRunScene(AbstractScene):
         for position in self.__enemy_point:
             self.sprites.add(self.tank_factory.create_tank(position, TankFactory.ENEMY_TANK))
 
+    def __load_name(self):
+        self.player1_name = self.font.render(self.__tank_player1.nick,True, (0, 190, 0))
+        if GameManager().double_mode:
+            self.player2_name = self.font.render(self.__tank_player2.nick, True, (0, 190, 0))
+        pass
+
     def load_game_screen(self):
         GameManager().load_screen(
             (self.config.SCREEN_WIDTH, self.config.SCREEN_HEIGHT)

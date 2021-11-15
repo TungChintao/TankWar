@@ -22,3 +22,9 @@ class COLLISION:
     WITH_TANK = 0b00001
     WITH_BORDER = 0b00100
     WITH_SCENE_ELEMENTS = 0b01000
+
+
+class AutoName(Enum):
+    @classmethod
+    def random(cls):
+        return random.choice(['Julia', 'Jonathan', 'Jack', 'Kevin', 'Nick', 'Mike', 'Handsome Boy', 'Pretty Girl'])

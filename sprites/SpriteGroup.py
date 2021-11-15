@@ -1,5 +1,6 @@
 import pygame
 from sprites.PlayerTank import PlayerTank
+from sprites.AutoPlayerTank import AutoPlayerTank
 from sprites.EnemyTank import EnemyTank
 from sprites.bullet import Bullet
 
@@ -44,7 +45,12 @@ class SpriteGroup(object):
 
         # player坦克
         for tank in self.player_tanks:
-            tank.update()
+            if isinstance(tank, AutoPlayerTank):
+                bullet = tank.auto_update(scene_elements, self.enemy_tanks, home)
+                if isinstance(bullet, Bullet):
+                    self.add(bullet)
+            else:
+                tank.update()
 
         for tank in self.enemy_tanks:
             self.remove(tank)
@@ -62,6 +68,4 @@ class SpriteGroup(object):
             self.player_bullets.draw(screen)
             self.enemy_bullets.draw(screen)
             self.player_tanks.draw(screen)
-            # for tank in self.player_tanks:
-            #     tank.draw(screen)
             self.enemy_tanks.draw(screen)

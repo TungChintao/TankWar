@@ -7,12 +7,18 @@ class PlayerTank(Tank):
         super().__init__(config=config)
         # print(self.config.TANK_IMAGE.get(name))
         self.name = name
+        self.nick = None
         self.load_tank_image(self.config.TANK_IMAGE.get(name))
         self.init_direction = DIRECTION.UP
         self.init_position = position
 
         self.life = 3
-        self.__reborn()
+        self._reborn()
+
+    def set_nickname(self, nick):
+        self.nick = nick
+        if self.nick is None:
+            self.nick = 'Lazy Boy'
 
     def _load_resources(self):
         super()._load_resources()
@@ -29,7 +35,7 @@ class PlayerTank(Tank):
             if self.boom_count > self.boom_time:
                 self.boom_count = 0
                 self.boom_flag = False
-                self.__reborn()
+                self._reborn()
 
     def decrease_life(self):
         if self.boom_flag:
@@ -41,8 +47,8 @@ class PlayerTank(Tank):
     def draw(self, screen):
         screen.blit(self.image, self.rect)
 
-    def __reborn(self):
-        print(self.life)
+    def _reborn(self):
+        # print(self.life)
         self.bullet_cooling = False
         self.bullet_time = 30
         self.bullet_cooling_count = 0

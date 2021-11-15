@@ -33,6 +33,7 @@ class GameManager(object):
             self.__begin_clock = 0
             self.__kill_enemies = 0
             self.__time_consuming = 0
+            self.player_name = 'player'
 
             # 开始游戏------------------------------
             # self.start()
