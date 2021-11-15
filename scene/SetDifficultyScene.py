@@ -43,7 +43,7 @@ class SetDifficultyScene(AbstractScene):
 
         self.cursor_rect = self.cursor.get_rect()
 
-        self.tip = self.font.render('按 <Enter> 开始 !', True, config.NORMAL)
+        self.tip = self.font.render('请按 <Enter> 开始 !', True, config.NORMAL)
         self.tip_rect = self.tip.get_rect()
         self.tip_rect.centerx, self.tip_rect.top = config.SCREEN_WIDTH / 2, config.SCREEN_HEIGHT / 1.3
 

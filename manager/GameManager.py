@@ -22,6 +22,7 @@ class GameManager(object):
             self.levels = None
             self.screen = None
             self.double_mode = False
+            self.item_choose = 2
 
             # 游戏判断标志-------------------------
             self.win_game = False
@@ -33,7 +34,7 @@ class GameManager(object):
             self.__begin_clock = 0
             self.__kill_enemies = 0
             self.__time_consuming = 0
-            self.player_name = 'player'
+            self.player_name = 'Lazy Player'
 
             # 开始游戏------------------------------
             # self.start()
@@ -103,8 +104,17 @@ class GameManager(object):
 
     def game_loop(self):
         from manager.SceneManager import SceneManager
-        SceneManager().show('GameStart')
-        SceneManager().show('SetDifficulty')
+        while self.item_choose == 2:
+            SceneManager().show('GameStart')
+            if self.item_choose == 0:
+                self.double_mode = False
+                SceneManager().show('SetDifficulty')
+            elif self.item_choose == 1:
+                self.double_mode = True
+                SceneManager().show('SetDifficulty')
+            elif self.item_choose == 2:
+                SceneManager().show('SetName')
+
         self.__begin_clock = time.time()
         while True:
             # print(self.__difficulty)
@@ -117,6 +127,7 @@ class GameManager(object):
                 self.reset_level()
             else:
                 self.up_level()
+
             if self.exit_game:
                 break
 

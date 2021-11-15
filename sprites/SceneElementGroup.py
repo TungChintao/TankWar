@@ -22,7 +22,7 @@ class SceneElementGroup(object):
     def draw(self, screen, layer):
         if layer == 1:
             self.river_group.draw(screen)
-        elif layer == 2:
             self.brick_group.draw(screen)
             self.iron_group.draw(screen)
+        elif layer == 2:
             self.tree_group.draw(screen)

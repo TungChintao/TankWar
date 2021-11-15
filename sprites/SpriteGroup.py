@@ -51,6 +51,7 @@ class SpriteGroup(object):
                     self.add(bullet)
             else:
                 tank.update()
+            tank.update_nickname()
 
         for tank in self.enemy_tanks:
             self.remove(tank)
@@ -67,5 +68,7 @@ class SpriteGroup(object):
         if layer == 1:
             self.player_bullets.draw(screen)
             self.enemy_bullets.draw(screen)
-            self.player_tanks.draw(screen)
+            # self.player_tanks.draw(screen)
+            for tank in self.player_tanks:
+                tank.draw(screen)
             self.enemy_tanks.draw(screen)

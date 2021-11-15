@@ -17,6 +17,7 @@ FONT_SIZE = SCREEN_WIDTH // 16
 LEVEL = os.path.join(os.getcwd(), 'levels')
 
 IMAGE = {
+    'input': os.path.join(os.getcwd(), 'resources/others/input.png'),
     'appear': os.path.join(os.getcwd(), 'resources/others/appear.png'),
     'background': os.path.join(os.getcwd(), 'resources/others/background.png'),
     'boom_dynamic': os.path.join(os.getcwd(), 'resources/others/boom_dynamic.png'),

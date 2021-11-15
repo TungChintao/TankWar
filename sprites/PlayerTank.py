@@ -1,5 +1,6 @@
 from sprites.tank import Tank
 from uiutil import DIRECTION
+import pygame
 
 
 class PlayerTank(Tank):
@@ -8,6 +9,9 @@ class PlayerTank(Tank):
         # print(self.config.TANK_IMAGE.get(name))
         self.name = name
         self.nick = None
+        self.nickname = None
+        self.nickname_rect = None
+        self.font = pygame.font.Font(config.FONT, config.SCREEN_HEIGHT // 36)
         self.load_tank_image(self.config.TANK_IMAGE.get(name))
         self.init_direction = DIRECTION.UP
         self.init_position = position
@@ -17,8 +21,12 @@ class PlayerTank(Tank):
 
     def set_nickname(self, nick):
         self.nick = nick
-        if self.nick is None:
-            self.nick = 'Lazy Boy'
+        self.nickname = self.font.render(self.nick, True, (0, 255, 0))
+
+    def update_nickname(self):
+        self.nickname_rect = self.nickname.get_rect()
+        self.nickname_rect.centerx = self.rect.centerx
+        self.nickname_rect.centery = self.rect.centery - 35
 
     def _load_resources(self):
         super()._load_resources()
@@ -46,6 +54,7 @@ class PlayerTank(Tank):
 
     def draw(self, screen):
         screen.blit(self.image, self.rect)
+        screen.blit(self.nickname, self.nickname_rect)
 
     def _reborn(self):
         # print(self.life)

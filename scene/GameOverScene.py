@@ -19,11 +19,16 @@ class GameOverScene(AbstractScene):
         config = self.config
 
         self.font_render = self.font.render("玩家记录", True, (255, 255, 0))
-
         self.font_rect = self.font_render.get_rect()
+
+        self.name_render = self.font2.render('姓名: ' + str(GameManager().player_name), True, (0, 255, 0))
+        self.name_rect = self.name_render.get_rect()
+        self.name_rect.left, self.name_rect.top = config.SCREEN_WIDTH / 3, config.SCREEN_HEIGHT / 5
+
         self.level_render = self.font2.render('通关数: ' + str(GameManager().level), True, (0, 255, 0))
         self.level_rect = self.level_render.get_rect()
         self.level_rect.left, self.level_rect.top = config.SCREEN_WIDTH / 3, config.SCREEN_HEIGHT / 3.7
+
         self.kill_render = self.font2.render('击败敌人: ' + str(GameManager().kill_enemies), True, (0, 255, 0))
         self.kill_rect = self.kill_render.get_rect()
         self.kill_rect.left, self.kill_rect.top = config.SCREEN_WIDTH / 3, config.SCREEN_HEIGHT / 3
@@ -44,6 +49,7 @@ class GameOverScene(AbstractScene):
         if self.record_show_flag:
             screen.blit(self.font_render, self.font_rect)
 
+        screen.blit(self.name_render, self.name_rect)
         screen.blit(self.level_render, self.level_rect)
         screen.blit(self.kill_render, self.kill_rect)
         screen.blit(self.time_render, self.time_rect)

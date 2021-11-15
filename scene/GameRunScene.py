@@ -24,7 +24,7 @@ class GameRunScene(AbstractScene):
         self.grid_size = config.GRID_SIZE
         self.border_len = config.BORDER_LEN
         self.background = pygame.image.load(config.IMAGE.get('background'))
-        self.font = pygame.font.Font(config.FONT, config.SCREEN_HEIGHT // 35)
+        self.font = pygame.font.Font(config.FONT, config.SCREEN_HEIGHT // 36)
         self.grid_size = config.GRID_SIZE
 
         self.scene_elements = SceneElementGroup()
@@ -42,11 +42,6 @@ class GameRunScene(AbstractScene):
         for position in self.__enemy_point:
             self.sprites.add(self.tank_factory.create_tank(position, TankFactory.ENEMY_TANK))
 
-    def __load_name(self):
-        self.player1_name = self.font.render(self.__tank_player1.nick, True, (0, 190, 0))
-        if GameManager().double_mode:
-            self.player2_name = self.font.render(self.__tank_player2.nick, True, (0, 190, 0))
-        pass
 
     def load_game_screen(self):
         GameManager().load_screen(
@@ -283,6 +278,7 @@ class GameRunScene(AbstractScene):
         self.scene_elements.draw(screen, 1)
         self.sprites.draw(screen, 1)
         self.scene_elements.draw(screen, 2)
+
         self.__home.draw(screen)
         pygame.display.flip()
 

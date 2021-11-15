@@ -17,7 +17,7 @@ class GameStartScene(AbstractScene):
             config.TANK_IMAGE.get('player1')
         ).convert_alpha().subsurface((0, 144), (48, 48))
         self.font = pygame.font.Font(config.FONT, config.FONT_SIZE)
-        # self.font = pygame.font.SysFont('lisu', config.FONT_SIZE)
+        self.mode = 0
 
     def _load_logo(self):
         config = self.config
@@ -36,16 +36,16 @@ class GameStartScene(AbstractScene):
         self.players_rect = self.players_normal.get_rect()
         self.players_rect.left, self.players_rect.top = config.SCREEN_WIDTH / 2.8, config.SCREEN_HEIGHT / 2
 
-        self.name_normal = self.font.render('Set Your Name', True, config.NORMAL)
-        self.name_hover = self.font.render('Set Your Name', True, config.HOVER)
+        self.name_normal = self.font.render('设置姓名', True, config.NORMAL)
+        self.name_hover = self.font.render('设置姓名', True, config.HOVER)
         self.name_rect = self.name_normal.get_rect()
-        self.name_rect.left, self.name_rect.top = config.SCREEN_WIDTH/2.8, config.SCREEN_HEIGHT/1.5
+        self.name_rect.left, self.name_rect.top = config.SCREEN_WIDTH/2.8, config.SCREEN_HEIGHT/1.65
 
         self.cursor_rect = self.cursor.get_rect()
 
-        self.tip = self.font.render('Press <Enter> to start !', True, config.NORMAL)
+        self.tip = self.font.render('请按 <Enter> 选择 !', True, config.NORMAL)
         self.tip_rect = self.tip.get_rect()
-        self.tip_rect.centerx, self.tip_rect.top = config.SCREEN_WIDTH / 2, config.SCREEN_HEIGHT / 1.5
+        self.tip_rect.centerx, self.tip_rect.top = config.SCREEN_WIDTH / 2, config.SCREEN_HEIGHT / 1.3
 
     def _game_loop(self):
         tip_flash_count = 0
@@ -57,18 +57,28 @@ class GameStartScene(AbstractScene):
             for event in pygame.event.get():
                 if event.type == pygame.KEYDOWN:
                     if event.key == pygame.K_RETURN:
-                        GameManager().double_mode = self.double_mode
+                        GameManager().item_choose = self.mode
                         return
-                    elif event.key == pygame.K_w or event.key == pygame.K_UP or event.key == pygame.K_s or event.key == pygame.K_DOWN:
-                        self.double_mode = not self.double_mode
+                    elif event.key == pygame.K_w or event.key == pygame.K_UP:
+                        if self.mode == 0:
+                            self.mode = 2
+                        else:
+                            self.mode -= 1
+                    elif event.key == pygame.K_s or event.key == pygame.K_DOWN:
+                        if self.mode == 2:
+                            self.mode = 0
+                        else:
+                            self.mode += 1
                 elif event.type == pygame.QUIT:
                     pygame.quit()
                     sys.exit()
 
-            if self.double_mode:
-                self.cursor_rect.right, self.cursor_rect.top = self.players_rect.left - 10, self.players_rect.top-10
+            if self.mode == 0:
+                self.cursor_rect.right, self.cursor_rect.top = self.player_rect.left - 10, self.player_rect.top - 10
+            elif self.mode == 1:
+                self.cursor_rect.right, self.cursor_rect.top = self.players_rect.left - 10, self.players_rect.top - 10
             else:
-                self.cursor_rect.right, self.cursor_rect.top = self.player_rect.left - 10, self.player_rect.top-10
+                self.cursor_rect.right, self.cursor_rect.top = self.name_rect.left - 10, self.name_rect.top - 10
             tip_flash_count += 1
             if tip_flash_count > tip_flash_time:
                 tip_flash_count = 0
@@ -87,9 +97,15 @@ class GameStartScene(AbstractScene):
 
         screen.blit(self.cursor, self.cursor_rect)
 
-        if self.double_mode:
-            screen.blit(self.player_normal, self.player_rect)
-            screen.blit(self.players_hover, self.players_rect)
-        else:
+        if self.mode == 0:
             screen.blit(self.player_hover, self.player_rect)
             screen.blit(self.players_normal, self.players_rect)
+            screen.blit(self.name_normal, self.name_rect)
+        elif self.mode == 1:
+            screen.blit(self.player_normal, self.player_rect)
+            screen.blit(self.players_hover, self.players_rect)
+            screen.blit(self.name_normal, self.name_rect)
+        else:
+            screen.blit(self.player_normal, self.player_rect)
+            screen.blit(self.players_normal, self.players_rect)
+            screen.blit(self.name_hover, self.name_rect)
