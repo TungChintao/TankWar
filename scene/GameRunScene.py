@@ -43,7 +43,7 @@ class GameRunScene(AbstractScene):
             self.sprites.add(self.tank_factory.create_tank(position, TankFactory.ENEMY_TANK))
 
     def __load_name(self):
-        self.player1_name = self.font.render(self.__tank_player1.nick,True, (0, 190, 0))
+        self.player1_name = self.font.render(self.__tank_player1.nick, True, (0, 190, 0))
         if GameManager().double_mode:
             self.player2_name = self.font.render(self.__tank_player2.nick, True, (0, 190, 0))
         pass
