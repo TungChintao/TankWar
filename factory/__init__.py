@@ -1,2 +1,0 @@
-from factory.TankFactory import TankFactory
-from factory.SceneElementFactory import SceneElementFactory
