@@ -1,6 +1,5 @@
 import sys
 import pygame
-
 from src.manager.GameManager import GameManager
 from src.scene.AbstractScene import AbstractScene
 

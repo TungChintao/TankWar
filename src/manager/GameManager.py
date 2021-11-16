@@ -17,7 +17,6 @@ class GameManager(object):
 
             # 初始配置---------------------------
             self.config = config
-            print(self.config.AUDIO)
             self.music = {}
             self.final = None
             self.levels = None

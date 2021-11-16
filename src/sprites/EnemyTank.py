@@ -2,7 +2,7 @@ import random
 import pygame
 from src.sprites.tank import Tank
 from src.uiutil import DIRECTION, COLLISION
-from src.manager.GameManager import GameManager
+from src.manager import GameManager
 
 
 class EnemyTank(Tank):

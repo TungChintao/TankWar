@@ -1,5 +1,6 @@
 from src.elements import *
 
+
 class SceneElementFactory(object):
     BRICK = 'brick'
     IRON = 'iron'

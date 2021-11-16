@@ -13,7 +13,7 @@ class TankFactory(object):
     def __init__(self, config):
         self.config = config
 
-    def create_tank(self, position, tank_type, name=None):
+    def create_tank(self, position, tank_type):
         if tank_type == TankFactory.ENEMY_TANK:
             return EnemyTank(position=position, config=self.config)
         elif tank_type == TankFactory.PLAYER1_TANK:
